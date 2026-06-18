@@ -22,3 +22,22 @@ def analyze_datafrm(df: ps.DataFrame) -> dict:
 
 
     return results
+
+import plotly.express as px
+import json
+
+def generate_charts(df: ps.DataFrame) -> dict:
+    charts = {}
+    df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
+
+    if "date" in df.columns and "revenue" in df.columns:
+        df["date"] = ps.to_datetime(df["date"])
+        fig = px.line(df, x="date", y="revenue", title="Revenue Over Time")
+        charts["revenue_trend"] = json.loads(fig.to_json())
+
+    if "product" in df.columns and "units" in df.columns:
+        top = df.groupby("product")["units"].sum().nlargest(5).reset_index()
+        fig = px.bar(top, x="product", y="units", title="Top 5 Products")
+        charts["best_sellers"] = json.loads(fig.to_json())
+
+    return charts
