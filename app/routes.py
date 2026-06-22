@@ -11,6 +11,8 @@ def home(request:Request):
 import pandas as ps
 import shutil, os
 from app.analytics import analyze_datafrm
+from app.models import SessionLocal, Report
+
 
 @router.post("/upload")
 async def upload_file(file:UploadFile = File(...)):
@@ -23,5 +25,19 @@ async def upload_file(file:UploadFile = File(...)):
     else:
         df = ps.read_excel(path)
     results = analyze_datafrm(df)
+
+    db = SessionLocal()
+    try:
+        report = Report(filename=file.filename, total_revenue=results.get("total_revenue"))
+        db.add(report)
+        db.commit()
+    finally:
+        db.close()
+
     return results
-#    return {"filename": file.filename}
+    #    return {"filename": file.filename}
+
+
+
+
+
