@@ -1,0 +1,5 @@
+.env
+venv/
+__pychae__/
+*.pyc
+uploads/*
