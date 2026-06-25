@@ -12,7 +12,7 @@ import pandas as ps
 import shutil, os
 from app.analytics import analyze_datafrm
 from app.models import SessionLocal, Report
-
+from app.ai_recommendations import get_recommendations
 
 @router.post("/upload")
 async def upload_file(file:UploadFile = File(...)):
@@ -34,6 +34,7 @@ async def upload_file(file:UploadFile = File(...)):
     finally:
         db.close()
 
+    results["ai_recommendations"] = get_recommendations(results)
     return results
     #    return {"filename": file.filename}
 
