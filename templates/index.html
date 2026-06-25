@@ -1,11 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Business Dashboard</title>
 </head>
 <body>
-<h1>Begin</h1>
-<h2>Business Analytics Dashboard</h2>
-<p>Upload a CSV or EXCEL file to get Started/</p>
-</body>
+    <h1>Begin</h1>
+    <h2>Business Analytics Dashboard</h2>
+    <p>Upload a CSV or EXCEL file to get Started/</p>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" name="file" accept=".csv,.xlsx" required>
+        <button type="submit">UPLOAD &ANALYSE</button>
+    </form>
+    <div id="results"></div>
+    <script>
+        const form = document.getElementById("uploadForm")
+        const resdiv = document.getElementById("results")
+
+        form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById("fileInput")
+
+        if (!fileInput.files[0]){
+        resdiv.innerHTML = "Please choose a file first.";
+        return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        resdiv.innerHTML = "Analysing...";
+
+        try{
+            const respo = await fetch("/upload", {method: "POST", body: formData});
+            if (!respo.ok){
+                const errText = await respo.text();
+                resdiv.innerHTML = "<p>Error: " + errText + "<p>";
+                return;
+            }
+            const data = await respo.json();
+            resdiv.innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+        } catch (err){
+            resdiv.innerHTML = "<p> Network error: " + err.message + "</p>";
+        }
+        });
+    </script>
+    </body>
 </html>
