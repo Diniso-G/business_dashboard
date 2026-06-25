@@ -38,7 +38,15 @@
                 return;
             }
             const data = await respo.json();
-            resdiv.innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+            let html = "<h3>Analysis Results</h3>";
+            html+= "<pre>" + JSON.stringify(Object.fromEntries(Object.entries(data).filter(([d]) => d !=="ai_recommendations")),
+            null, 2) + "</pre>";
+
+            if (data.ai_recommendations){
+                html += "<h3>AI Recommendations</h3>";
+                html += "<div style = 'white-space: pre-wrap; line-height:1.5;'>" + data.ai_recommendations + "</div>";
+                }
+            resdiv.innerHTML = html;
         } catch (err){
             resdiv.innerHTML = "<p> Network error: " + err.message + "</p>";
         }
