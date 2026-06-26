@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
     <title>Business Dashboard</title>
 </head>
 <body>
@@ -13,6 +14,8 @@
         <button type="submit">UPLOAD &ANALYSE</button>
     </form>
     <div id="results"></div>
+    <div id="chart__revenue"></div>
+    <div id="chart__bestsellers"></div>
     <script>
         const form = document.getElementById("uploadForm")
         const resdiv = document.getElementById("results")
@@ -39,7 +42,7 @@
             }
             const data = await respo.json();
             let html = "<h3>Analysis Results</h3>";
-            html+= "<pre>" + JSON.stringify(Object.fromEntries(Object.entries(data).filter(([d]) => d !=="ai_recommendations")),
+            html+= "<pre>" + JSON.stringify(Object.fromEntries(Object.entries(data).filter(([d]) => d !=="ai_recommendations" && d!== "charts")),
             null, 2) + "</pre>";
 
             if (data.ai_recommendations){
@@ -47,6 +50,15 @@
                 html += "<div style = 'white-space: pre-wrap; line-height:1.5;'>" + data.ai_recommendations + "</div>";
                 }
             resdiv.innerHTML = html;
+
+            if (data.charts){
+                if (data.charts.revenue_trend){
+                    Plotly.newPlot("chart__revenue", data.charts.revenue_trend.data, data.charts.revenue_trend.layout);
+                }
+                if (data.charts.best_sellers){
+                    Plotly.newPlot("chart__bestsellers", data.charts.best_sellers.data, data.charts.best_sellers.layout);
+                }
+            }
         } catch (err){
             resdiv.innerHTML = "<p> Network error: " + err.message + "</p>";
         }

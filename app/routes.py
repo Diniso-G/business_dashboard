@@ -10,7 +10,7 @@ def home(request:Request):
 
 import pandas as ps
 import shutil, os
-from app.analytics import analyze_datafrm
+from app.analytics import analyze_datafrm, generate_charts
 from app.models import SessionLocal, Report
 from app.ai_recommendations import get_recommendations
 
@@ -25,6 +25,7 @@ async def upload_file(file:UploadFile = File(...)):
     else:
         df = ps.read_excel(path)
     results = analyze_datafrm(df)
+    charts = generate_charts(df)
 
     db = SessionLocal()
     try:
@@ -35,6 +36,7 @@ async def upload_file(file:UploadFile = File(...)):
         db.close()
 
     results["ai_recommendations"] = get_recommendations(results)
+    results["charts"] = charts
     return results
     #    return {"filename": file.filename}
 
