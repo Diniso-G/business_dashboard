@@ -41,11 +41,18 @@ import plotly.express as px
 import json
 
 def generate_charts(df: ps.DataFrame) -> dict:
-    charts = {}
-    df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
+    '''charts = {}
+    #df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
+    df = prepare_datafrm(df)
+    charts["_debug_columns"] = list(df.columns)
+    charts["_debug_has_revenue"] = "revenue" in df.columns
+    charts["_debug_has_date"] = "date" in df.columns
+    print("DEBUG generate_charts_columns:", list(df.columns))
+    print("DEBUG generate_charts dtypes:", df.dtypes.to_dict())
 
     if "date" in df.columns and "revenue" in df.columns:
         #df["date"] = ps.to_datetime(df["date"])
+
         fig = px.line(df, x="date", y="revenue", title="Revenue Over Time")
         charts["revenue_trend"] = json.loads(fig.to_json())
 
@@ -55,4 +62,7 @@ def generate_charts(df: ps.DataFrame) -> dict:
         fig = px.bar(top, x="product", y=quant_col, title="Top 5 Products")
         charts["best_sellers"] = json.loads(fig.to_json())
 
+    print("DEBUG charts keys returned:", list(charts.keys()))
     return charts
+    '''
+    return {"test": "HELLO_THIS IS WORKING"}
