@@ -1,4 +1,6 @@
 import  pandas as ps
+import plotly.express as px
+import json
 #from sqlalchemy import result_tuple
 
 def prepare_datafrm(df: ps.DataFrame) -> ps.DataFrame:
@@ -37,19 +39,18 @@ def analyze_datafrm(df: ps.DataFrame) -> dict:
 
     return results
 
-import plotly.express as px
-import json
 
 def generate_charts(df: ps.DataFrame) -> dict:
-    '''charts = {}
+    charts = {}
     #df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
     df = prepare_datafrm(df)
+    '''
     charts["_debug_columns"] = list(df.columns)
     charts["_debug_has_revenue"] = "revenue" in df.columns
     charts["_debug_has_date"] = "date" in df.columns
     print("DEBUG generate_charts_columns:", list(df.columns))
     print("DEBUG generate_charts dtypes:", df.dtypes.to_dict())
-
+'''
     if "date" in df.columns and "revenue" in df.columns:
         #df["date"] = ps.to_datetime(df["date"])
 
@@ -65,4 +66,4 @@ def generate_charts(df: ps.DataFrame) -> dict:
     print("DEBUG charts keys returned:", list(charts.keys()))
     return charts
     '''
-    return {"test": "HELLO_THIS IS WORKING"}
+    return {"test": "HELLO_THIS IS WORKING"}'''

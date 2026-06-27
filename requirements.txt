@@ -1,2 +1,11 @@
 google-genai
 python-dotenv
+pandas
+fastapi
+uvicorn[standard]
+sqlalchemy
+plotly
+openpyxl
+jinja2
+python-multipart
+
