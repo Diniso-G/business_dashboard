@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="49f60fff-f69d-4da8-a93f-0a26c65c8389" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/auth_routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dashboard.db" beforeDir="false" afterPath="$PROJECT_DIR$/app/dashboard.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +38,7 @@
     "Python.ai_recommendations.executor": "Run",
     "Python.analytics.executor": "Run",
     "Python.auth.executor": "Run",
+    "Python.auth_routes.executor": "Run",
     "Python.debug_test.executor": "Run",
     "Python.main.executor": "Run",
     "Python.models.executor": "Run",
