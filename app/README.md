@@ -10,6 +10,7 @@ Built to demonstrate a complete data pipline from raw file upload, through ata a
 - File upload -which accepts .csv and .xlsx sales data
 - Automated analysis - pandas calculations of total revenue, average order value, best selling products, and monthly revene trends
 - Charts -Plotly- generated revenue and sales visualisations
+- Persistent storage -every uploaded report is saved to a SQLite database via sql alchemy
 - AI Recommendation - Google Gemini API analyses the results and generates specific actionable businesss recommendations
 - Simple web interface -currently allow upload file then analyses and view results
 
@@ -21,10 +22,10 @@ Built to demonstrate a complete data pipline from raw file upload, through ata a
 | Backend | Python, FastApi             |
 | Data Analysis | Pandas                      |
 | Visualisation | Plotly                      |
-| Database |                             |
+| Database | SQLite, SQLAlchemy          |
 | AI | Google Gemini API           |
 | Frontend | HTML, JAVASCRPT (FETCH API) |
-|    |             |
+|    |                             |
 
 ---
 
@@ -34,7 +35,7 @@ Built to demonstrate a complete data pipline from raw file upload, through ata a
 2. Fast API recives the file and loads it into a pandas dataframe
 3. The analysis module calculates revenue, top products and trends/ if no revenue it finds it using product and cost
 4. Plotly generates chart data from the results
-5. Report saved in pysql
+5. Report saved in SQLite
 6. The summary statistics are sent to the Gemini API, which returns three tailor business recommendations
 7. Results-including the AI recommendations are returned to the browser and displayed.
 
@@ -45,7 +46,23 @@ Built to demonstrate a complete data pipline from raw file upload, through ata a
 ```
 business-dashboard/
 |-- app/
-|   |-- main.py (continue)
+|   |-- __init__.py
+|   |-- ai_recommendatio.py 
+|   |-- analytics.py
+|   |--dashboard.db
+|   |-- debug_test.py 
+|   |-- main.py
+|   |-- models.py
+|   |-- routes.py 
+|-- static/
+|-- templates
+|-- |-- index.html
+|   |-- test_sales_data.csv
+|-- uploads
+|   |-- test_sales_data.csv 
+|-- requirements.txt
+|-- .env 
+
 ```
 
 ---
@@ -76,7 +93,7 @@ GEMINI_API_KEY=your_own_personal_api_key_here
 Get a free Gemini API key at [aistudio.google.com](https:aistudio.google.com).
 
 ### 4. Set up the database
-Make sure to use pysql
+No separate database server is required. The app uses SQLite which stores all data in a single dashboard.db file thats created automatically.
 
 ### 5.Run the app
 ```
