@@ -3,12 +3,14 @@ from fastapi.staticfiles import StaticFiles
 #from jinja2.lexer import count_newlines
 
 from app.routes import router
+from app.auth_routes import router as ar
 #from app.models import Base, engine
 
 
 app = FastAPI(title="Business Analytics Dashboard")
 app.mount("/static", StaticFiles(), name = "static")
 app.include_router(router)
+app.include_router(ar)
 
 from fastapi.responses import JSONResponse
 import traceback

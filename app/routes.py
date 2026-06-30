@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Request
+from fastapi import APIRouter, UploadFile, File, Request, Depends
 from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
@@ -13,9 +13,10 @@ import shutil, os
 from app.analytics import analyze_datafrm, generate_charts
 from app.models import SessionLocal, Report
 from app.ai_recommendations import get_recommendations
+from app.auth import get_current_user
 
 @router.post("/upload")
-async def upload_file(file:UploadFile = File(...)):
+async def upload_file(file:UploadFile = File(...), current_user = Depends(get_current_user)):
     path = f"uploads/{file.filename}"
     with open(path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
@@ -29,7 +30,7 @@ async def upload_file(file:UploadFile = File(...)):
 
     db = SessionLocal()
     try:
-        report = Report(filename=file.filename, total_revenue=results.get("total_revenue"))
+        report = Report(filename=file.filename, total_revenue=results.get("total_revenue"), user_id=current_user.id)
         db.add(report)
         db.commit()
     finally:
