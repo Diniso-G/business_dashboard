@@ -41,6 +41,65 @@
         <div id="chart__bestsellers"></div>
     </div>
     <script>
+        let authToken, userEmail = null;
+
+        const authSection = document.getElementById("authSection");
+        const dashboardSection = document.getElementById("dashboardSection");
+        const authMessage = document.getElementById("authMessage");
+
+        document.getElementById("showRegister").addEventListener("click", (e) =>{
+            e.preventDefault();
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("registerForm").style.display = "block";
+        });
+        document.getElementById("showLogin").addEventListener("click", (e) =>{
+            e.preventDefault();
+            document.getElementById("registerForm").style.display = "none";
+            document.getElementById("loginForm").style.display = "block";
+        });
+
+        document.getElementById("registerBtn").addEventListener("click", async() =>{
+            const email = document.getElementById("registerEmail").value;
+            const password = document.getElementById("registerPassword").value";
+
+            try{
+                const respo = await fetch("/register", {
+                    method: "POST", headers: { "Content-Type": "application/json"},
+                    body:JSON.stringify({email, password})
+                });
+                const data = await respo.json();
+                if (!respo.ok) {
+                    authMessage.innerHTML = "<p style = 'color:red;'>" + (data.detail || "Registration failed") + "</p>";
+                    return;
+                }
+                onLoginSuccess(data.access_token, email);
+            }
+            catch (err) {
+                authMessage.innerHTML = "<p style = 'color:red;'> Network error: " + err.message + " </p>";
+            }
+        });
+
+        document.getElementById("loginBtn").addEventListener("click", async() =>{
+            const email = document.getElementById("loginEmail").value;
+            const password = document.getElementById("loginPassword").value";
+
+            try{
+                const respo = await fetch("/login", {
+                    method: "POST", headers: { "Content-Type": "application/json"},
+                    body:JSON.stringify({email, password})
+                });
+                const data = await respo.json();
+                if (!respo.ok) {
+                    authMessage.innerHTML = "<p style = 'color:red;'>" + (data.detail || "Login failed") + "</p>";
+                    return;
+                }
+                onLoginSuccess(data.access_token, email);
+            }
+            catch (err) {
+                authMessage.innerHTML = "<p style = 'color:red;'> Network error: " + err.message + " </p>";
+            }
+        });
+
         const form = document.getElementById("uploadForm")
         const resdiv = document.getElementById("results")
 
