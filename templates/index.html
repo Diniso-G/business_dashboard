@@ -9,13 +9,37 @@
     <h1>Begin</h1>
     <h2>Business Analytics Dashboard</h2>
     <p>Upload a CSV or EXCEL file to get Started/</p>
-    <form id="uploadForm">
-        <input type="file" id="fileInput" name="file" accept=".csv,.xlsx" required>
-        <button type="submit">UPLOAD &ANALYSE</button>
-    </form>
-    <div id="results"></div>
-    <div id="chart__revenue"></div>
-    <div id="chart__bestsellers"></div>
+    <div id="authSection">
+        <div id="authMessage"></div>
+        <div id="loginForm">
+            <h3>Login</h3>
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+
+            <button id="loginBtn">Login</button>
+            <p>No account? <a href="#" id="showRegister">Register</a> </p>
+        </div>
+        <div id="registerForm" style="display:none;">
+            <h3>Register</h3>
+            <input type="email" id="registerEmail" placeholder="Email" required>
+            <input type="password" id="registerPassword" placeholder="Password" required>
+
+            <button id="registerBtn">Register</button>
+            <p>Already have an account? <a href="#" id="showLogin">Login</a> </p>
+        </div>
+    </div>
+    <div id="dashboardSection" style="display:none;">
+        <p>Logged in as <span id="userEmailDisplay"></span> &mdash;
+        <a href="#" id="logoutBtn">Log out</a> </p>
+
+        <form id="uploadForm">
+            <input type="file" id="fileInput" name="file" accept=".csv,.xlsx" required>
+            <button type="submit">UPLOAD &ANALYSE</button>
+        </form>
+        <div id="results"></div>
+        <div id="chart__revenue"></div>
+        <div id="chart__bestsellers"></div>
+    </div>
     <script>
         const form = document.getElementById("uploadForm")
         const resdiv = document.getElementById("results")
