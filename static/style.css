@@ -1,0 +1,366 @@
+/*General page styles*/
+/*Go to fonts.google.com, search for your fonts click and get, go back and chose all you would like get embed code copy and paste */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/*root from LMS PROJECT*/
+:root {
+    --bg-base: #0f1629;
+    --bg-surface: #1a2340;
+    --slate: #94a3b8;
+    --ink-primary: #1a1814;
+    --ink-secondary: #6b6760;
+    --ink-muted: #a8a49f;
+    --brand: #1a3d2b;
+    --brand-light: #3b83f6;
+    --brand-mid: #2563eb;
+    --card: #ffffff
+    --border: #2a3a5c;
+    --green: #10b981;
+    --text: #1e293b
+    --text-light: #64748b
+    --radius-sm: 12px;
+}
+
+html, body, #root {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.background-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    object-fit: cover;
+    z-index: -2;
+}
+
+.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.45);
+    z-index: -1;
+}
+
+.btn-primary {
+    background: var(--brand);
+    color: #fff;
+    padding: 11px 24px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.18s, box-shadow 0.18s;
+}
+
+.btn-primary:hover {
+    background: var(--brand-mid);
+    box-shadow: 0 4px 12px rgba(26, 61, 43, 0.25);
+}
+
+.btn-ghost{
+    background: transparent;
+    color: var(--brand-mid);
+    padding: 1px 24px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--brand-mid);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.18s;
+}
+
+.btn-primary:hover {
+    background: var(--brand-mid);
+}
+
+
+
+/*body*/
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-base);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    background: var(--bg-base);
+    background-size: 400% 400%;
+    min-height: 100vh;
+
+    animation: gradientMove 15s ease infinite;
+}
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/*Nav bar*/
+.navbar {
+    display: flex;
+    padding: 0px 32px;
+    background-color: var(--brand);
+    color: white;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    align-items: center;
+}
+
+.navbar a {
+    color: rgba(255,255,255,0.7);
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    transition: background 0.18s, color 0.18s;
+    text-decoration: none;
+    margin-left: 0;
+    font-weight: bold;
+}
+
+.navbar a:hover {
+    text-decoration: none;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+.navbar a.active {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+}
+
+.navbar .brand {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 22px;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-right: auto;
+    text-decoration: none;
+}
+
+/*Main content container*/
+.container{
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+/*Welcome page*/
+.welcome {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 28px;
+    color: #1e40af;
+}
+
+/*Registration form*/
+.form-card {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 40px 36px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    background-color: #f8f9fa;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px);
+}
+
+.form-card h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    color: var(--ink-primary);
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+input, select, textarea {
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-md);
+    background: var(--bg-base);
+    transition: border-color 0.18s, box-shadow 0.18s;
+    font-size: 16px;
+    width: 95%;
+    box-sizing: border-box;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--brand-mid);
+    background: var(--bg-surface);
+    box-shadow: 0 0 0 3px rgba(47, 110, 75, 0.12);
+    outline: none;
+}
+
+/*Button*/
+button {
+    width: auto;
+    padding: 10px 22px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--brand);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+}
+
+button:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+button:active {
+    transform: scale(0.98);
+}
+button:hover {
+    background: var(--brand-mid);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #222;
+}
+h2 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #34496e;
+}
+
+/*Form Styling*/
+form{
+    background: transparent;
+    padding: 0;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+form p {
+    margin-top: 10px;
+    color: #f44336;
+}
+
+.dashboard {
+    max-width: 1100px;
+    margin: 40px auto;
+    background-color: var(--bg-surface);
+    padding: 32px;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px);
+    color: white;
+}
+.dashboard h1, .dashboard h2, .dashboard h3 {
+    color: white;
+}
+
+.page-enter {
+    animation: fadeUp 0.3s ease both;
+}
+@keyframes fadeUp {
+    from {
+        opacity: 0; transform: translateY(12px);}
+    to {
+        opacity: 1; transform: translateY(0);}
+}
+
+.btn{
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.btn-logout {
+    background-color: #e74c3c;
+    color: #fff;
+    float: right;
+}
+.btn-delete {
+    background: #b91c1c;
+}
+.btn-delete:hover {
+    background: #991b1b;
+}
+
+.btn-logout:hover {
+    background-color: #c0392b;
+}
+
+.btn-enroll, .btn-desc, .btn-upload, .btn-delete, .btn-promote, .btn-demote {
+    background-color: var(--brand-mid);
+    color: white;
+}
+.btn-enroll:hover, .btn-desc:hover, .btn-upload:hover, .btn-delete:hover, .btn-promote:hover, .btn-demote:hover {
+    background-color: #3d8a5e;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group input, .input-group textarea, .input-group select{
+    width: 95%;
+    padding: 12px 12px 12px 0;
+}
+
+.input-group label {
+    position: absolute;
+    top: 12px;
+    left: 0;
+    color: #999;
+    pointer-events: none;
+    transition: 0.2s ease all;
+}
+
+.input-group input:focus ~ label, .input-group input:not(:placeholder-shown) ~ label,
+.input-group textarea:focus ~ label, .input-group textarea:not(:placeholder-shown) ~ label,
+.input-group select:focus ~ label, .input-group select:not(:placeholder-shown) ~ label {
+    top: -10px;
+    font-size: 12px;
+    color: #4CAF50;
+    background-color: white;
+    padding: 0 4px;
+}
+
+.clearfix::after {
+    content: '';
+    display: table;
+    clear: both;
+}
