@@ -60,7 +60,7 @@
 
         document.getElementById("registerBtn").addEventListener("click", async() =>{
             const email = document.getElementById("registerEmail").value;
-            const password = document.getElementById("registerPassword").value";
+            const password = document.getElementById("registerPassword").value;
 
             try{
                 const respo = await fetch("/register", {
@@ -81,7 +81,7 @@
 
         document.getElementById("loginBtn").addEventListener("click", async() =>{
             const email = document.getElementById("loginEmail").value;
-            const password = document.getElementById("loginPassword").value";
+            const password = document.getElementById("loginPassword").value;
 
             try{
                 const respo = await fetch("/login", {
@@ -100,51 +100,71 @@
             }
         });
 
+        function onLoginSuccess(token, email) {
+            authToken = token;
+            userEmail = email;
+            authMessage.innerHTML = "";
+            authSection.style.display = "none";
+            dashboardSection.style.display = "block";
+
+            document.getElementById("userEmailDisplay").textContent = email;
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", (e) => {
+            e.preventDefault();
+            authToken = null;
+            userEmail = null;
+            dashboardSection.style.display = "none";
+            authSection.style.display = "block";
+            document.getElementById("results").innerHTML = "";
+        });
+
         const form = document.getElementById("uploadForm")
         const resdiv = document.getElementById("results")
 
         form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const fileInput = document.getElementById("fileInput")
+            e.preventDefault();
+            const fileInput = document.getElementById("fileInput")
 
-        if (!fileInput.files[0]){
-        resdiv.innerHTML = "Please choose a file first.";
-        return;
-        }
-
-        const formData = new FormData();
-        formData.append("file", fileInput.files[0]);
-        resdiv.innerHTML = "Analysing...";
-
-        try{
-            const respo = await fetch("/upload", {method: "POST", body: formData});
-            if (!respo.ok){
-                const errText = await respo.text();
-                resdiv.innerHTML = "<p>Error: " + errText + "<p>";
+            if (!fileInput.files[0]){
+                resdiv.innerHTML = "Please choose a file first.";
                 return;
             }
-            const data = await respo.json();
-            let html = "<h3>Analysis Results</h3>";
-            html+= "<pre>" + JSON.stringify(Object.fromEntries(Object.entries(data).filter(([d]) => d !=="ai_recommendations" && d!== "charts")),
-            null, 2) + "</pre>";
 
-            if (data.ai_recommendations){
-                html += "<h3>AI Recommendations</h3>";
-                html += "<div style = 'white-space: pre-wrap; line-height:1.5;'>" + data.ai_recommendations + "</div>";
-                }
-            resdiv.innerHTML = html;
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            resdiv.innerHTML = "Analysing...";
 
-            if (data.charts){
-                if (data.charts.revenue_trend){
-                    Plotly.newPlot("chart__revenue", data.charts.revenue_trend.data, data.charts.revenue_trend.layout);
+            try{
+                const respo = await fetch("/upload", {method: "POST", headers: { "Authorization": "Bearer" + authToken },
+                    body: formData});
+                if (!respo.ok){
+                    const errText = await respo.text();
+                    resdiv.innerHTML = "<p>Error: " + errText + "<p>";
+                    return;
                 }
-                if (data.charts.best_sellers){
-                    Plotly.newPlot("chart__bestsellers", data.charts.best_sellers.data, data.charts.best_sellers.layout);
+                const data = await respo.json();
+                let html = "<h3>Analysis Results</h3>";
+                html+= "<pre>" + JSON.stringify(Object.fromEntries(Object.entries(data).filter(([d]) => d !=="ai_recommendations" && d!== "charts")),
+                null, 2) + "</pre>";
+
+                if (data.ai_recommendations){
+                    html += "<h3>AI Recommendations</h3>";
+                    html += "<div style = 'white-space: pre-wrap; line-height:1.5;'>" + data.ai_recommendations + "</div>";
                 }
+                resdiv.innerHTML = html;
+
+                if (data.charts){
+                    if (data.charts.revenue_trend){
+                        Plotly.newPlot("chart__revenue", data.charts.revenue_trend.data, data.charts.revenue_trend.layout);
+                    }
+                    if (data.charts.best_sellers){
+                        Plotly.newPlot("chart__bestsellers", data.charts.best_sellers.data, data.charts.best_sellers.layout);
+                    }
+                }
+            } catch (err){
+                resdiv.innerHTML = "<p> Network error: " + err.message + "</p>";
             }
-        } catch (err){
-            resdiv.innerHTML = "<p> Network error: " + err.message + "</p>";
-        }
         });
     </script>
     </body>
