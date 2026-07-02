@@ -1,19 +1,19 @@
 from fastapi import APIRouter, UploadFile, File, Request, Depends
 from fastapi.templating import Jinja2Templates
 
-router = APIRouter()
-templates = Jinja2Templates(directory="templates")
-
-@router.get("/")
-def home(request:Request):
-    return templates.TemplateResponse(request, "index.html")
-
 import pandas as ps
 import shutil, os
 from app.analytics import analyze_datafrm, generate_charts
 from app.models import SessionLocal, Report
 from app.ai_recommendations import get_recommendations
 from app.auth import get_current_user
+
+router = APIRouter()
+templates = Jinja2Templates(directory="templates")
+
+@router.get("/")
+def home(request:Request):
+    return templates.TemplateResponse(request, "index.html")
 
 @router.post("/upload")
 async def upload_file(file:UploadFile = File(...), current_user = Depends(get_current_user)):
