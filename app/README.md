@@ -13,31 +13,35 @@ Built to demonstrate a complete data pipline from raw file upload, through ata a
 - Persistent storage -every uploaded report is saved to a SQLite database via sql alchemy
 - AI Recommendation - Google Gemini API analyses the results and generates specific actionable businesss recommendations
 - Simple web interface -currently allow upload file then analyses and view results
+- User authentication -register and login with email and password; the passwords are bcrypt-hashed, sessions are JWT-based
+- Protected uploads -every upload is tied to the logged-in user; unauthorised requests are rejected
 
 ---
 
 ## Tech Stack
-| Layer | Technology                  |
-|----|-----------------------------|
-| Backend | Python, FastApi             |
-| Data Analysis | Pandas                      |
-| Visualisation | Plotly                      |
-| Database | SQLite, SQLAlchemy          |
-| AI | Google Gemini API           |
-| Frontend | HTML, JAVASCRPT (FETCH API) |
-|    |                             |
+| Layer          | Technology                        |
+|----------------|-----------------------------------|
+| Backend        | Python, FastApi                   |
+| Data Analysis  | Pandas                            |
+| Visualisation  | Plotly                            |
+| Database       | SQLite, SQLAlchemy                |
+| AI             | Google Gemini API                 |
+| Frontend       | HTML, JAVASCRPT (FETCH API)       |
+| Authentication | JWT(python jose), bcrypt(passlib) |
 
 ---
 
 ## How it works
     
-1. User uploads a CSV/EXCEL file through web interface
-2. Fast API recives the file and loads it into a pandas dataframe
-3. The analysis module calculates revenue, top products and trends/ if no revenue it finds it using product and cost
-4. Plotly generates chart data from the results
-5. Report saved in SQLite
-6. The summary statistics are sent to the Gemini API, which returns three tailor business recommendations
-7. Results-including the AI recommendations are returned to the browser and displayed.
+1. User registers or logs in -a JWT access token is returned and stored in browser
+2. User uploads a CSV/EXCEL file through web interface
+3. Fast API receives the file, verifies the token and identifies the logged-in user 
+4. The file is loaded into a pandas dataframe for analysis
+5. The analysis module calculates revenue, top products and trends/ if no revenue it finds it using product and cost
+6. Plotly generates chart data from the results
+7. Report saved in SQLite
+8. The summary statistics are sent to the Gemini API, which returns three tailor business recommendations
+9. Results-including the AI recommendations are returned to the browser and displayed.
 
 ---
 
@@ -49,6 +53,8 @@ business-dashboard/
 |   |-- __init__.py
 |   |-- ai_recommendatio.py 
 |   |-- analytics.py
+|   |-- auth.py
+|   |-- auth_routes.py
 |   |--dashboard.db
 |   |-- debug_test.py 
 |   |-- main.py
@@ -106,10 +112,13 @@ Visit `http:\\127.0.0.1:8000` in your browser.
 ---
 
 ## Usage
-1. Open the app in browser
-2. Choose a `.csv` or `.xlsx` file containing sales data (experts columns such as 'date', 'product', etc)
-3. Click **Upload an analyse**
-4. View the calculated metrics and AI- generated recommendations directly on the page
+1. Open the app in browser -you will see login/register forms
+2. Register a new account with email and password
+3. You will be taken to dashboard automatically
+4. Choose a `.csv` or `.xlsx` file containing sales data (experts columns such as 'date', 'product', etc)
+5. Click **Upload an analyse**
+6. View the calculated metrics and AI- generated recommendations directly on the page
+7. Click logout to end your session
 
 ---
 
@@ -117,6 +126,8 @@ Visit `http:\\127.0.0.1:8000` in your browser.
 
 - [ ] add user aunthentication
 - [ ] add support for more files
+- [ ] administrator dashboard
+- [ ] support for more file formats
 
 ---
 
