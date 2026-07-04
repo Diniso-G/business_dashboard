@@ -11,8 +11,8 @@ Built to demonstrate a complete data pipline from raw file upload, through ata a
 - Automated analysis - pandas calculations of total revenue, average order value, best selling products, and monthly revene trends
 - Charts -Plotly- generated revenue and sales visualisations
 - Persistent storage -every uploaded report is saved to a SQLite database via sql alchemy
-- AI Recommendation - Google Gemini API analyses the results and generates specific actionable businesss recommendations
-- Simple web interface -currently allow upload file then analyses and view results
+- AI Recommendation - Google Gemini API analyses the results and generates specific actionable business recommendations
+- Polished web user interface -currently allow upload file then analyses and view results. Dark navy dashboard built with custom CSS and Inter topology. Contains animated metric cards, fade in transitions and responsive layout
 - User authentication -register and login with email and password; the passwords are bcrypt-hashed, sessions are JWT-based
 - Protected uploads -every upload is tied to the logged-in user; unauthorised requests are rejected
 
@@ -36,7 +36,7 @@ Built to demonstrate a complete data pipline from raw file upload, through ata a
 1. User registers or logs in -a JWT access token is returned and stored in browser
 2. User uploads a CSV/EXCEL file through web interface
 3. Fast API receives the file, verifies the token and identifies the logged-in user 
-4. The file is loaded into a pandas dataframe for analysis
+4. The file is loaded into a pandas dataframe for analysis. Revenue is calculated automatically if it is not present.
 5. The analysis module calculates revenue, top products and trends/ if no revenue it finds it using product and cost
 6. Plotly generates chart data from the results
 7. Report saved in SQLite
@@ -61,6 +61,7 @@ business-dashboard/
 |   |-- models.py
 |   |-- routes.py 
 |-- static/
+|   |-- style.css 
 |-- templates
 |-- |-- index.html
 |   |-- test_sales_data.csv
@@ -122,12 +123,44 @@ Visit `http:\\127.0.0.1:8000` in your browser.
 
 ---
 
+## Expected CSV Format
+
+| Column    | Description                          |
+|-----------|--------------------------------------|
+| `Date`    | Transaction date (e.g. `2023-01-02`) |
+| `Product` | Product name                         |
+| `Units`   | Units solds                          |
+| `Revenue` | Revenue for that row                 |
+
+- Files with `Qunatity` and `Price` columns are also supported- revenue is calculated automatically. `N/A` values are handled gracefully
+
+---
+
+## Requirements
+```
+fastapi
+uvicorn
+pandas
+plotly
+sqlalchemy
+passlib[bcrypt]
+python-json[cryptography]
+pydantic[email]
+python-multipart
+python-dotenv
+google-genai
+bcrypt==4.0.1
+```
+
+---
+
 ## Future Improvements
 
-- [ ] add user aunthentication
+- [ ] add user authentication
 - [ ] add support for more files
 - [ ] administrator dashboard
 - [ ] support for more file formats
+- [ ] report history page
 
 ---
 
