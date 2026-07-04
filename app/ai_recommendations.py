@@ -15,13 +15,16 @@ def get_client():
     return client
 
 def get_recommendations(summary:dict) -> str:
-    prompt = f"""You are a business analyst. Based on this data:
-    -Total revenue: {summary.get('total_revenue')}
-    -Best selling product: {list(summary.get('best_sellers', {}).keys())[0] if summary.get('best_sellers') else 'N/A'}
-    Average Order Value: {summary.get('avg_order_value')}
+    try:
+        prompt = f"""You are a business analyst. Based on this data:
+            -Total revenue: {summary.get('total_revenue')}
+            -Best selling product: {list(summary.get('best_sellers', {}).keys())[0] if summary.get('best_sellers') else 'N/A'}
+            Average Order Value: {summary.get('avg_order_value')}
 
-    Give 3 specific, actionable business recommendations. Please"""
+            Give 3 specific, actionable business recommendations. Please"""
 
-    client = get_client()
-    response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
-    return response.text
+        client = get_client()
+        response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+        return response.text
+    except Exception as err:
+        return f"AI recommendations temporarily unavailable ({type(err).__name__})."

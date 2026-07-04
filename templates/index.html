@@ -14,166 +14,343 @@
 <body>
 <div id="authScreen">
     <div class="auth-wrap">
-    <h1>Begin</h1>
-    <h2>Business Analytics Dashboard</h2>
-    <p>Upload a CSV or EXCEL file to get Started/</p>
-    <div id="authSection">
-        <div id="authMessage"></div>
-        <div id="loginForm">
-            <h3>Login</h3>
-            <input type="email" id="loginEmail" placeholder="Email" required>
-            <input type="password" id="loginPassword" placeholder="Password" required>
-
-            <button id="loginBtn">Login</button>
-            <p>No account? <a href="#" id="showRegister">Register</a> </p>
+        <div class="auth-brand">
+            <h1>Business Analytics Dashboard</h1>
+            <p>Upload your sales data. Get valuable insights instantly.</p>
         </div>
-        <div id="registerForm" style="display:none;">
-            <h3>Register</h3>
-            <input type="email" id="registerEmail" placeholder="Email" required>
-            <input type="password" id="registerPassword" placeholder="Password" required>
-
-            <button id="registerBtn">Register</button>
-            <p>Already have an account? <a href="#" id="showLogin">Login</a> </p>
+        <div class="auth-card">
+            <div id="authMessage" class="auth-error"></div>
+            <div id="loginForm">
+                <h2>Sign in to your account</h2>
+                <div class="form-group">
+                    <label>Email address</label>
+                    <input type="email" id="loginEmail" placeholder="email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="*******" required>
+                </div>
+                <button class="btn-primary" id="loginBtn">Sign in</button>
+                <div class="auth-switch">
+                    <p>Do not have an account? <a href="#" id="showRegister">Register and create one</a> </p>
+                </div>
+            </div>
+            <div id="registerForm" style="display:none;">
+                <h2>Create your account</h2>
+                <div class="form-group">
+                    <label>Email address</label>
+                    <input type="email" id="registerEmail" placeholder="email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="registerPassword" placeholder="*******" required>
+                </div>
+                <button class="btn-primary" id="registerBtn">Create account</button>
+                <div class="auth-switch">
+                    <p>Already have an account? <a href="#" id="showLogin">Sign in</a> </p>
+                </div>
+            </div>
         </div>
     </div>
-    <div id="dashboardSection" style="display:none;">
-        <p>Logged in as <span id="userEmailDisplay"></span> &mdash;
-        <a href="#" id="logoutBtn">Log out</a> </p>
+</div>
+<div id="appScreen">
+    <header class="app-topbar">
+        <div class="topbar-brand">
+            <div class="dot"></div>
+            Analytics Dashboard
+        </div>
+        <div class="topbar-user">
+            <span class="email" id="userEmailDisplay"></span>
+            <button class="btn-logout" id="logoutBtn">Sign out</button>
+        </div>
+    </header>
 
-        <form id="uploadForm">
-            <input type="file" id="fileInput" name="file" accept=".csv,.xlsx" required>
-            <button type="submit">UPLOAD &ANALYSE</button>
-        </form>
-        <div id="results"></div>
-        <div id="chart__revenue"></div>
-        <div id="chart__bestsellers"></div>
-    </div>
-    </div>
+    <main class="app-main">
+        <div class="upload-card">
+            <h2>Upload Sales Data</h2>
+            <p>CSV or Excel file:</p>
+            <div class="upload-row">
+                <label class="file-label" for="fileInput">
+                    <span id="fileLabel">Choose a file or drag it here</span>
+                </label>
+                <input type="file" id="fileInput" name="file" accept=".csv,.xlsx" required>
+                <button id ="analyseBtn" class= "btn-analyse" type="submit">ANALYSE</button>
+            </div>
+        </div>
+        <div id="statusBar">
+            <div class="spinner" id="statusSpinner"></div>
+            <span id="statusText"> Analysing your data...</span>
+        </div>
+
+        <div id="results" style="display:none">
+            <div class="metrics-grid">
+                <div class="metric-card" id="metricRevenue">
+                    <div class="metric-label">Total Revenue</div>
+                    <div class="metric-value" id="valRevenue">-</div>
+                    <div class="metric-sub">Across all transactions</div>
+                </div>
+                <div class="metric-card" id="metricAvg">
+                    <div class="metric-label">Avg Order Value</div>
+                    <div class="metric-value" id="valAvg">-</div>
+                    <div class="metric-sub">Across all transactions</div>
+                </div>
+                <div class="metric-card" id="metricTop">
+                    <div class="metric-label">Top Product</div>
+                    <div class="metric-value" id="valTop" style="font-size:20px;">-</div>
+                    <div class="metric-sub">Across all transactions</div>
+                </div>
+            </div>
+            <div id="chart__grid">
+                <div class="chart-card" id="chartRevenueCard">
+                    <h3>Revenue Over Time</h3>
+                    <div id="chart__revenue"></div>
+                </div>
+                <div class="chart-card" id="chartBestCard">
+                    <h3>Top Products</h3>
+                    <div id="chart__bestsellers"></div>
+                </div>
+            </div>
+            <div class="ai-card" id="aiCard">
+                <div class="ai-card-header">
+                    <span class="ai-badge">AI</span>
+                    <h3>Business Recommendations</h3>
+                </div>
+                <div class="ai-text" id="aiText"></div>
+            </div>
+        </div>
+    </main>
 </div>
     <script>
         let authToken, userEmail = null;
 
-        const authSection = document.getElementById("authSection");
-        const dashboardSection = document.getElementById("dashboardSection");
-        const authMessage = document.getElementById("authMessage");
+        function showError(msg) {
+            const sem = document.getElementById("authMessage");
+            sem.textContent = msg;
+            sem.style.display = "block";
+        }
+
+        function clearError() {
+            const sem = document.getElementById("authMessage");
+            sem.style.display = "none";
+            sem.textContent = "";
+        }
+
+        function animateCount(sem, target, prefix) {
+            const dura = 800;
+            const strt = performance.now();
+            const frm= 0;
+            function step(now) {
+                const p = Math.min((now - strt) / dura, 1);
+                const ease = 1 - Math.pow(1 - p, 3);
+                sem.textContent = prefix + Math.round(frm + (target - frm) * ease).toLocaleString();
+
+                if (p<1)
+                    requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function reveal(sem) {
+            requestAnimationFrame(() => sem.classList.add("visible"));
+        }
+
+        const authScreen = document.getElementById("authScreen");
+        const appScreen = document.getElementById("appScreen");
+        const userEmailDisplay = document.getElementById("userEmailDisplay");
+
+        const svdToken = localStorage.getItem("authToken");
+        const svdEmail = localStorage.getItem("userEmail");
+        if (svdToken) {
+            authToken = svdToken;
+            userEmail = svdEmail;
+
+            authScreen.style.display ="none";
+            appScreen.style.display ="block";
+            userEmailDisplay.textContent = svdEmail;
+        }
 
         document.getElementById("showRegister").addEventListener("click", (e) =>{
             e.preventDefault();
+            clearError();
             document.getElementById("loginForm").style.display = "none";
             document.getElementById("registerForm").style.display = "block";
         });
         document.getElementById("showLogin").addEventListener("click", (e) =>{
             e.preventDefault();
+            clearError();
             document.getElementById("registerForm").style.display = "none";
             document.getElementById("loginForm").style.display = "block";
         });
 
         document.getElementById("registerBtn").addEventListener("click", async() =>{
-            const email = document.getElementById("registerEmail").value;
+            clearError();
+            const email = document.getElementById("registerEmail").value.trim();
             const password = document.getElementById("registerPassword").value;
+
+            if(!email ||!password) {
+                showError("Please fill in all fields.");
+                return;
+            }
 
             try{
                 const respo = await fetch("/register", {
-                    method: "POST", headers: { "Content-Type": "application/json"},
+                    method: "POST",
+                    headers: { "Content-Type": "application/json"},
                     body:JSON.stringify({email, password})
                 });
                 const data = await respo.json();
                 if (!respo.ok) {
-                    authMessage.innerHTML = "<p style = 'color:red;'>" + (data.detail || "Registration failed") + "</p>";
+                    showError(data.detail || "Registration failed.");
                     return;
                 }
                 onLoginSuccess(data.access_token, email);
             }
             catch (err) {
-                authMessage.innerHTML = "<p style = 'color:red;'> Network error: " + err.message + " </p>";
+                showError("Network error--- check if server is running!");
             }
         });
 
         document.getElementById("loginBtn").addEventListener("click", async() =>{
-            const email = document.getElementById("loginEmail").value;
+            clearError();
+            const email = document.getElementById("loginEmail").value.trim();
             const password = document.getElementById("loginPassword").value;
 
+            if(!email ||!password) {
+                showError("Please fill in all fields.");
+                return;
+            }
             try{
                 const respo = await fetch("/login", {
-                    method: "POST", headers: { "Content-Type": "application/json"},
+                    method: "POST",
+                    headers: { "Content-Type": "application/json"},
                     body:JSON.stringify({email, password})
                 });
                 const data = await respo.json();
                 if (!respo.ok) {
-                    authMessage.innerHTML = "<p style = 'color:red;'>" + (data.detail || "Login failed") + "</p>";
+                    showError(data.detail || "Login failed. Please check your credentials");
                     return;
                 }
                 onLoginSuccess(data.access_token, email);
             }
             catch (err) {
-                authMessage.innerHTML = "<p style = 'color:red;'> Network error: " + err.message + " </p>";
+                showError("Network error--- check if server is running!");
             }
         });
 
         function onLoginSuccess(token, email) {
             authToken = token;
-            userEmail = email;
-            authMessage.innerHTML = "";
-            authSection.style.display = "none";
-            dashboardSection.style.display = "block";
+            userEmail= email;
 
-            document.getElementById("userEmailDisplay").textContent = email;
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("userEmail", email);
+
+            authScreen.style.display = "none";
+            appScreen.style.display = "block";
+
+            userEmailDisplay.textContent = email;
         }
 
-        document.getElementById("logoutBtn").addEventListener("click", (e) => {
-            e.preventDefault();
+        document.getElementById("logoutBtn").addEventListener("click", () => {
             authToken = null;
             userEmail = null;
-            dashboardSection.style.display = "none";
-            authSection.style.display = "block";
-            document.getElementById("results").innerHTML = "";
+
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userEmail");
+
+            appScreen.style.display = "none";
+            authScreen.style.display = "flex";
+            document.getElementById("results").style.display = "none";
+            document.getElementById("statusBar").className = "";
+            document.getElementById("loginEmail").value = "";
+            document.getElementById("loginPassword").value = "";
+
+            ["metricRevenue", "metricAvg", "metricTop", "chartRevenueCard", "chartBestCard", "aiCard"]
+                .forEach(id => document.getElementById(id).classList.remove("visible"));
         });
 
-        const form = document.getElementById("uploadForm")
         const resdiv = document.getElementById("results")
 
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const fileInput = document.getElementById("fileInput")
+        document.getElementById("analyseBtn").addEventListener("click", async () => {
+            const fileInput = document.getElementById("fileInput");
 
             if (!fileInput.files[0]){
-                resdiv.innerHTML = "Please choose a file first.";
+                alert("Please choose a file first.");
                 return;
             }
 
+            const stbar = document.getElementById("statusBar");
+            stbar.className = "show";
+            document.getElementById("statusSpinner").style.display = "block";
+            document.getElementById("statusText").textContent = "Analysing your data...";
+            document.getElementById("analyseBtn").disabled = true;
+            resdiv.style.display= "none";
+
             const formData = new FormData();
             formData.append("file", fileInput.files[0]);
-            resdiv.innerHTML = "Analysing...";
 
             try{
-                const respo = await fetch("/upload", {method: "POST", headers: { "Authorization": "Bearer" + authToken },
+                const respo = await fetch("/upload", {
+                    method: "POST",
+                    headers: { "Authorization": "Bearer " + authToken },
                     body: formData});
                 if (!respo.ok){
                     const errText = await respo.text();
-                    resdiv.innerHTML = "<p>Error: " + errText + "<p>";
+                    stbar.className = "show error";
+                    document.getElementById("statusSpinner").style.display = "none";
+                    document.getElementById("statusText").textContent = "Error: " + errText;
+                    document.getElementById("analyseBtn").disabled = false;
                     return;
                 }
                 const data = await respo.json();
-                let html = "<h3>Analysis Results</h3>";
-                html+= "<pre>" + JSON.stringify(Object.fromEntries(Object.entries(data).filter(([d]) => d !=="ai_recommendations" && d!== "charts")),
-                null, 2) + "</pre>";
+
+                stbar.className = "";
+                document.getElementById("analyseBtn").disabled= false;
+                resdiv.style.display="block";
+
+                if (data.total_revenue !== undefined) {
+                    animateCount(document.getElementById("valRevenue"), data.total_revenue, "$");
+                }
+                if (data.avg_order_value !== undefined) {
+                    animateCount(document.getElementById("valAvg"), data.avg_order_value, "$");
+                }
+                if (data.best_sellers !== undefined) {
+                    document.getElementById("valTop").textContent = Object.keys(data.best_sellers)[0] || "-";
+                }
+
+                ["metricRevenue", "metricAvg", "metricTop"].forEach(id => reveal(document.getElementById(id)));
+
 
                 if (data.ai_recommendations){
-                    html += "<h3>AI Recommendations</h3>";
-                    html += "<div style = 'white-space: pre-wrap; line-height:1.5;'>" + data.ai_recommendations + "</div>";
+                    document.getElementById("aiText").textContent = data.ai_recommendations;
+                    reveal(document.getElementById("aiCard"));
                 }
-                resdiv.innerHTML = html;
+
+                const layout = {
+                    margin: {t: 10, b:40, l: 40, r:10},
+                    paper_bgcolor: "transparent", plot_bgcolor: "transparent", height: 220
+                };
+
 
                 if (data.charts){
                     if (data.charts.revenue_trend){
+                        //Plotly.newPlot("chart__revenue", data.charts.revenue_trend.data, Object.assign({}, data.charts.revenue_trend.layout, layout));
                         Plotly.newPlot("chart__revenue", data.charts.revenue_trend.data, data.charts.revenue_trend.layout);
+
+                        reveal(document.getElementById("chartRevenueCard"));
                     }
                     if (data.charts.best_sellers){
+                        //Plotly.newPlot("chart__bestsellers", data.charts.best_sellers.data, Object.assign({}, data.charts.best_sellers.layout, layout));
                         Plotly.newPlot("chart__bestsellers", data.charts.best_sellers.data, data.charts.best_sellers.layout);
+
+                        reveal(document.getElementById("chartBestCard"));
                     }
                 }
             } catch (err){
-                resdiv.innerHTML = "<p> Network error: " + err.message + "</p>";
+                stbar.className = "show error";
+                document.getElementById("statusSpinner").style.display = "none";
+                document.getElementById("statusText").textContent = "Network error: " + err.message;
+                document.getElementById("analyseBtn").disabled = false;
+
             }
         });
     </script>
