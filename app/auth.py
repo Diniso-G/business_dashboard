@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
-from sqlalchemy.util import deprecated
+from app.database import SessionLocal
 
 load_dotenv()
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")

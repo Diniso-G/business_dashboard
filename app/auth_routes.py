@@ -1,28 +1,34 @@
 #route for user and authorization
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
-from app.models import SessionLocal, User
+import re
+from app.database import get_db
+from app.models import User
 from app.auth import hash_password, verify_password, create_access_token
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+def _validate_email(v: str) -> str:
+    if not EMAIL_RE.match(v):
+        raise ValueError("invalid email format")
+    return v
 
 class RegisterRequest(BaseModel):
-    email: EmailStr
-    password: str
+    email: str
+    password: str = Field(min_length=4)
+
+    _validate_email = field_validator("email")(_validate_email)
 
 class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
+    email: str
+    password: str = Field(min_length=4)
+
+    _validate_email = field_validator("email")(_validate_email)
 
 @router.post("/register")
 def register(payload: RegisterRequest, db:Session = Depends(get_db)):
