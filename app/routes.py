@@ -24,7 +24,19 @@ ALLOWED_EXTENSIONS = {".csv", ".xlsx"}
 
 @router.get("/")
 def home(request:Request):
-    return templates.TemplateResponse(request, "index.html")
+    return templates.TemplateResponse(request, "login.html")
+
+@router.get("/dashboard")
+def dashboard_page(request:Request):
+    return templates.TemplateResponse(request, "dashboard.html")
+
+@router.get("/history")
+def history_page(request:Request):
+    return templates.TemplateResponse(request, "history.html")
+
+@router.get("/settings")
+def setting_page(request:Request):
+    return templates.TemplateResponse(request, "settings.html")
 
 def _safe_filename(original: str) -> str:
     ext = os.path.splitext(original)[1].lower()

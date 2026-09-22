@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Sign in - Business Dashboard</title>
+</head>
+<body>
+<div id="authScreen">
+    <div class="auth-wrap">
+        <div class="auth-brand">
+            <h1>Business Analytics Dashboard</h1>
+            <p>Upload your sales data. Get valuable insights instantly.</p>
+        </div>
+        <div class="auth-card">
+            <div id="authMessage" class="auth-error"></div>
+            <div id="loginForm">
+                <h2>Sign in to your account</h2>
+                <div class="form-group">
+                    <label>Email address</label>
+                    <input type="email" id="loginEmail" placeholder="email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="*******" required>
+                </div>
+                <button class="btn-primary" id="loginBtn">Sign in</button>
+                <div class="auth-switch">
+                    <p>Do not have an account? <a href="#" id="showRegister">Register and create one</a> </p>
+                </div>
+            </div>
+            <div id="registerForm" style="display:none;">
+                <h2>Create your account</h2>
+                <div class="form-group">
+                    <label>Email address</label>
+                    <input type="email" id="registerEmail" placeholder="email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="registerPassword" placeholder="*******" required>
+                </div>
+                <button class="btn-primary" id="registerBtn">Create account</button>
+                <div class="auth-switch">
+                    <p>Already have an account? <a href="#" id="showLogin">Sign in</a> </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    if (localStorage.getItem("authToken")) {
+        window.location.href = "/dashboard";
+    }
+
+    function showError(msg) {
+        const sem = document.getElementById("authMessage");
+        sem.textContent = msg;
+        sem.style.display = "block";
+    }
+
+    function clearError() {
+        const sem = document.getElementById("authMessage");
+        sem.style.display = "none";
+        sem.textContent = "";
+    }
+
+    document.getElementById("showRegister").addEventListener("click", (e) =>{
+            e.preventDefault();
+            clearError();
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("registerForm").style.display = "block";
+        });
+        document.getElementById("showLogin").addEventListener("click", (e) =>{
+            e.preventDefault();
+            clearError();
+            document.getElementById("registerForm").style.display = "none";
+            document.getElementById("loginForm").style.display = "block";
+        });
+
+        document.getElementById("registerBtn").addEventListener("click", async() =>{
+            clearError();
+            const email = document.getElementById("registerEmail").value.trim();
+            const password = document.getElementById("registerPassword").value;
+
+            if(!email || !password) {
+                showError("Please fill in all fields.");
+                return;
+            }
+
+            try{
+                const respo = await fetch("/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json"},
+                    body:JSON.stringify({email, password})
+                });
+                const data = await respo.json();
+                if (!respo.ok) {
+                    showError(data.detail || "Registration failed.");
+                    return;
+                }
+                onLoginSuccess(data.access_token, email);
+            }
+            catch (err) {
+                showError("Network error--- check if server is running!");
+            }
+        });
+
+        document.getElementById("loginBtn").addEventListener("click", async() =>{
+            clearError();
+            const email = document.getElementById("loginEmail").value.trim();
+            const password = document.getElementById("loginPassword").value;
+
+            if(!email ||!password) {
+                showError("Please fill in all fields.");
+                return;
+            }
+            try{
+                const respo = await fetch("/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json"},
+                    body:JSON.stringify({email, password})
+                });
+                const data = await respo.json();
+                if (!respo.ok) {
+                    showError(data.detail || "Login failed. Please check your credentials");
+                    return;
+                }
+                onLoginSuccess(data.access_token, email);
+            }
+            catch (err) {
+                showError("Network error--- check if server is running!");
+            }
+        });
+
+        function onLoginSuccess(token, email) {
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("userEmail", email);
+
+            window.location.href = "/dashboard";
+        }
+</script>
+</body>
+</html>
