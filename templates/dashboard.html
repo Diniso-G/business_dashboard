@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Dashboard - Business Dashboard</title>
+</head>
+<body>
+
+    {% include "_nav.html" %}
+
+    <main class="app-main">
+        <div class="upload-card">
+            <h2>Upload Sales Data</h2>
+            <p>CSV or Excel file:</p>
+            <div class="upload-row">
+                <label class="file-label" for="fileInput">
+                    <span id="fileLabel">Choose a file or drag it here</span>
+                </label>
+                <input type="file" id="fileInput" name="file" accept=".csv,.xlsx" multiple >
+                <button id ="analyseBtn" class= "btn-analyse" type="submit">ANALYSE</button>
+            </div>
+
+            <div class="upload-row" style="margin-top:12px;">
+                <div class="form-group" style="margin: 0;">
+                    <label style="text-align: left;">Start date (optional)</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label style="text-align: left;">End date (optional)</label>
+                    <input type="date" id="endDate">
+                </div>
+            </div>
+
+            <div class="import-row">
+                <button class="btn-small" id="importSheetBtn" type="button">Import from Google Sheet</button>
+                <button class="btn-small" id="importStripeBtn" type="button">Import from Stripe</button>
+                <button class="btn-small" id="importShopifyBtn" type="button">Import from Shopify</button>
+            </div>
+        </div>
+
+        <div id="statusBar">
+            <div class="spinner" id="statusSpinner"></div>
+            <span id="statusText"> Analysing your data...</span>
+        </div>
+
+        <div id="results" style="display:none">
+            <div class="metrics-grid">
+                <div class="metric-card" id="metricRevenue">
+                    <div class="metric-label">Total Revenue</div>
+                    <div class="metric-value" id="valRevenue">-</div>
+                    <div class="metric-sub">Across all transactions</div>
+                </div>
+                <div class="metric-card" id="metricAvg">
+                    <div class="metric-label">Avg Order Value</div>
+                    <div class="metric-value" id="valAvg">-</div>
+                    <div class="metric-sub">Across all transactions</div>
+                </div>
+                <div class="metric-card" id="metricTop">
+                    <div class="metric-label">Top Product</div>
+                    <div class="metric-value" id="valTop" style="font-size:20px;">-</div>
+                    <div class="metric-sub">Across all transactions</div>
+                </div>
+            </div>
+
+            <div class="extra-metrics" id="extraMetrics"></div>
+
+            <div id="anomalySection" style="display: none; margin-bottom: 24px;">
+                <h3 style="color: #fff; font-size: 13px; margin-bottom: 8px;">Anomalies detected</h3>
+                <ul class="anomaly-list" id="anomalyList"></ul>
+            </div>
+
+            <div class="section-loading" id="chartsLoading"><div class="spinner"></div> Rendering charts...</div>
+            <div class="charts-grid" id="chart__grid">
+                <div class="chart-card" id="chartRevenueCard">
+                    <h3>Revenue over Time</h3>
+                    <div id="chart__revenue"></div>
+                </div>
+                <div class="chart-card" id="chartBestCard">
+                    <h3>Top Products</h3>
+                    <div id="chart__bestsellers"></div>
+                </div>
+                <div class="chart-card" id="chartDayCard" style="display: none;">
+                    <h3>Revenue by Day of Week</h3>
+                    <div id="chart__byday"></div>
+                </div>
+            </div>
+            <div class="section-loading" id="aiLoading"> <div class="spinner"></div> Generating recommendations... </div>
+            <div class="ai-card" id="aiCard">
+                <div class="ai-card-header">
+                    <span class="ai-badge">AI</span>
+                    <h3>Business Recommendations</h3>
+                </div>
+                <div class="ai-text" id="aiText"></div>
+
+                <div class="chat-box">
+                    <h3 style="color: #fff; font-size: 13px; margin-bottom: 8px;"> Ask a question about this report</h3>
+                    <div class="chat-log" id="chatLog"></div>
+                    <div class="chat-input-row">
+                        <input type="text" id="chatInput" placeholder="e.g. Why did revenue change?">
+                        <button class="btn-small" id="chatSendBtn" type="button">Send</button>
+                    </div>
+                </div>
+                <div class="export-row">
+                    <a class="btn-small" id="exportCsvBtn" href="#" target="_blank">Export CSV</a>
+                    <a class="btn-small" id="exportPdfBtn" href="#" target="_blank">Export PDF</a>
+                    <a class="btn-small" id="viewHistoryLink" href="/history">view full history</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="trendSection" style="margin-top: 32px;">
+            <h3 style="color: #fff; font-size: 14px; margin-bottom: 10px;">Revenue Trend Across All Reports</h3>
+            <div class="chart-card"><div id="chart__overalltrend"></div></div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="mappingModal">
+        <div class="modal-box">
+            <h3>Mapping your columns</h3>
+            <p style="color: var(--slate); font-size: 13px; margin-bottom: 12px;">
+                We couldn't confidently detect: <span id="missingFieldsText"></span>.
+                Tell us which of your columns matches each field.
+            </p>
+            <div id="mappingFields"></div>
+            <div class="modal-actions">
+                <button class="btn-small" id="mappingCancelBtn" type="button">Cancel</button>
+                <button class="btn-primary" id="mappingSubmitBtn" type="button" style="width: auto;">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="sheetModal">
+        <div class="modal-box">
+            <h3>Import from Google Sheet</h3>
+            <p style="color: var(--slate); font-size: 13px; margin-bottom: 12px;">Sheet must be shared as "Anyone with link can view".</p>
+            <div class="form-group"><label>Sheet URL</label><input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/..."></div>
+            <div class="modal-actions">
+                <button class="btn-small" id="sheetCancelBtn" type="button">Cancel</button>
+                <button class="btn-primary" id="sheetSubmitBtn" type="button" style="width: auto;">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="stripeModal">
+        <div class="modal-box">
+            <h3>Import from Stripe </h3>
+            <p style="color: var(--slate); font-size: 13px; margin-bottom: 12px;">Your secret key is used once for this request and is never stored.</p>
+            <div class="form-group"><label>Stripe secret key</label><input type="password" id="stripeKey" placeholder="sk_live_... or sk_test_..."></div>
+            <div class="modal-actions">
+                <button class="btn-small" id="stripeCancelBtn" type="button">Cancel</button>
+                <button class="btn-primary" id="stripeSubmitBtn" type="button" style="width: auto;">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="shopifyModal">
+        <div class="modal-box">
+            <h3>Import from Shopify</h3>
+            <p style="color: var(--slate); font-size: 13px; margin-bottom: 12px;">Requires a custom app Admin access token with read_orders scope. Never stored.</p>
+            <div class="form-group"><label>Shop domain</label><input type="text" id="shopifyDomain" placeholder="my-store.shopify.com"></div>
+            <div class="form-group"><label>Access token</label><input type="password" id="shopifyToken" placeholder="shpat_..."></div>
+            <div class="modal-actions">
+                <button class="btn-small" id="shopifyCancelBtn" type="button">Cancel</button>
+                <button class="btn-primary" id="shopifySubmitBtn" type="button" style="width: auto;">Import</button>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/common.js"></script>
+    <script slot="/static/js/dashboard.js"></script>
+</body>
+</html>
+

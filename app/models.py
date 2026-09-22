@@ -29,7 +29,7 @@ class BusinessMember(Base):
     __tablename__ = "business_members"
     id = Column(Integer, primary_key=True)
     business_id = Column(Integer, ForeignKey("businesses.id"))
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
     role = Column(String, default="member")
     invited_at = Column(DateTime, default=datetime.utcnow)
     
