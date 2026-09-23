@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Settings - Business Dashboard</title>
+</head>
+<body>
+
+    {% include "_nav.html" %}
+
+    <main class="app-main">
+        <div class="page-header">
+            <h2>Workspaces</h2>
+            <p>Separate multiple businesses/shops, and invite teammates to view the same reports.</p>
+        </div>
+
+        <div class="settings-grid">
+           <div class="settings-card">
+                <h3>Your workspaces</h3>
+                <div id="businessList"></div>
+
+                <div class="form-group" style="margin-top: 16px;">
+                    <label>New workspace name</label>
+                    <input type="text" id="newBusinessName" placeholder="e.g. My IT Company">
+                </div>
+                <button class="btn-primary" id="createBusinessBtn" type="button">Create workspace</button>
+           </div>
+            <div class="settings-card">
+                <h3>Team members <span id="selectedBusinessLabel" style="color: var(--slate); font-weight: 400; font-size: 12px;"></span></h3>
+                <p style="color: var(--slate);font-size: 13px;margin-bottom: 12px;">Selecy a workspace above to manage its members. Only the owner can invite.</p>
+                <div id="memberList"></div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label>Invite by email</label>
+                    <input type="email" id="inviteEmail" placeholder="teammate@example.com">
+                </div>
+                <button class="btn-primary" id="inviteBtn" type="button">Send invite</button>
+                <p style="color: var(--slate); font-size: 12px;margin-top: 8px;">They must already have an account with this email.</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/settings.js"></script>
+</body>
+</html>
