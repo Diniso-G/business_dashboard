@@ -2,7 +2,9 @@ from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Tex
 
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.database import Base, engine, SessionLocal
+from app.database import Base, engine
+from app.database import SessionLocal
+
 
 class User(Base):
     __tablename__ = "users"
@@ -46,7 +48,7 @@ class Report(Base):
     avg_order_value = Column(Float)
     uploaded_at = Column(DateTime, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"))
-    business_id = Column(Integer, ForeignKey("business.id"), nullable=True)
+    business_id = Column(Integer, ForeignKey("businesses.id"), nullable=True)
 
     results_json = Column(Text)
     charts_json = Column(Text)
@@ -54,5 +56,6 @@ class Report(Base):
 
     owner = relationship("User", back_populates="reports")
     business = relationship("Business", back_populates="reports")
+
 
 Base.metadata.create_all(engine)

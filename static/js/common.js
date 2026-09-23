@@ -47,12 +47,12 @@ async function initBusinessSelect(onChange) {
     const select = document.getElementById("businessSelect");
     if (!select) return;
     try {
-        const resp = await fetch("/business", {headers: authHeaders( )});
+        const resp = await fetch("/businesses", {headers: authHeaders() });
         if (!resp.ok) return;
         const businesses = await resp.json();
         select.innerHTML = '<option value="">Personal (no workspace)</option>';
         businesses.forEach(b => {
-            const opt = document.createElement("option")
+            const opt = document.createElement("option");
             opt.value = b.id;
             opt.textContent = b.name + (b.is_owner ? "" : " (shared)");
             select.appendChild(opt);

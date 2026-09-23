@@ -27,7 +27,7 @@ def home(request:Request):
     return templates.TemplateResponse(request, "login.html")
 
 @router.get("/dashboard")
-def dashboard_page(request:Request):
+def dashboard_page(request: Request):
     return templates.TemplateResponse(request, "dashboard.html")
 
 @router.get("/history")
