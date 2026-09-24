@@ -91,7 +91,7 @@ def _detect_anomalies(series: ps.Series, label_prefix: str) -> list:
     if not std or ps.isna(std):
         return anomalies
 
-    for idx, value in series.item():
+    for idx, value in series.items():
         z = (value - mean) / std
         if abs(z) >= 2:
             direction = "spike" if z > 0 else "drop"

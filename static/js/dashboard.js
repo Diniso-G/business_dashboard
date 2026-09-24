@@ -179,7 +179,7 @@ function renderResults(data) {
         data.anomalies.forEach(a => {
             const li = document.createElement("li");
             li.className = a.direction === "spike" ? "spike" : "";
-            li.textContent = `${a.label}: ${a.direction} to $(${a.value.toLocaleString()} (z=${a.z_score})`;
+            li.textContent = `${a.label}: ${a.direction} to $${a.value.toLocaleString()} (z=${a.z_score})`;
             anomalyList.append(li);
         });
     } else {
@@ -259,16 +259,16 @@ async function sendChat() {
     input.value = "";
 
     const log = document.getElementById("chatLog");
-    log.innerHTML += `<div class="chat-msg user"><b>You:</b> ${question}</div>`;
+    log.innerHTML += `<div class="chart-msg user"><b>You:</b> ${question}</div>`;
     log.scrollTop = log.scrollHeight;
     chatHistory.push({ role: "user", content: question});
 
-    const reps = await fetch(`/reports/${currentReportId}/chat`, {
+    const resp = await fetch(`/reports/${currentReportId}/chat`, {
         method: "POST", headers: authHeaders({"Content-Type": "application/json"}),
         body: JSON.stringify({question, history: chatHistory})
     });
     const data = await resp.json();
-    log.innerHTML += `<div class="chat-msg assistant"><b>Assistant:<b> ${data.answer}</div>`;
+    log.innerHTML += `<div class="chart-msg assistant"><b>Assistant:</b> ${data.answer}</div>`;
     log.scrollTop = log.scrollHeight;
     chatHistory.push({role: "assistant", content: data.answer});
 }
@@ -313,7 +313,7 @@ async function runImport(endpoint, fields) {
     if (businessId) formData.append("business_id", businessId);
 
     try {
-        const reps = await fetch(endpoint, {method: "POST", headers: authHeaders(), body: formData});
+        const resp = await fetch(endpoint, {method: "POST", headers: authHeaders(), body: formData});
         const data = await resp.json();
         if (!resp.ok) {
             stbar.className = "show error";
