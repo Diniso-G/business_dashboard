@@ -16,7 +16,7 @@ class InviteRequest(BaseModel):
 
 def _user_business_ids(db:Session, user: User) -> list[int]:
     owned = [b.id for b in db.query(Business).filter(Business.owner_id == user.id).all()]
-    member_of = [m.business_id for m in db.query(BusinessMember).filter(BusinessMember.owner_id == user.id).all()]
+    member_of = [m.business_id for m in db.query(BusinessMember).filter(BusinessMember.user_id == user.id).all()]
     return list(set(owned + member_of))
 
 def _assert_access(db:Session, business_id: int, user:User) -> Business:

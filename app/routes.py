@@ -78,7 +78,7 @@ async def upload_preview(file: UploadFile = File(...), current_user=Depends(get_
     return detect_columns(df)
 
 @router.post("/upload")
-async def upload_file(files :UploadFile = File(...), business_id: int | None = Form(None), column_mapping: str | None = Form(None), start_date: str | None = Form(None), end_date: str | None = Form(None), current_user = Depends(get_current_user), db: Session = Depends(get_db),):
+async def upload_file(files :list[UploadFile] = File(...), business_id: int | None = Form(None), column_mapping: str | None = Form(None), start_date: str | None = Form(None), end_date: str | None = Form(None), current_user = Depends(get_current_user), db: Session = Depends(get_db),):
     _assert_business_access(db, business_id, current_user)
 
     mapping = {}

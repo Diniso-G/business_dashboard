@@ -14,7 +14,7 @@ class User(Base):
 
     reports = relationship("Report", back_populates="owner")
     owned_businesses = relationship("Business", back_populates="owner")
-    membership = relationship("BusinessMember", back_populates="user")
+    memberships = relationship("BusinessMember", back_populates="user")
 
 class Business(Base):
     __tablename__ = "businesses"
@@ -35,7 +35,7 @@ class BusinessMember(Base):
     role = Column(String, default="member")
     invited_at = Column(DateTime, default=datetime.utcnow)
     
-    business = relationship("Business", back_populates="member")
+    business = relationship("Business", back_populates="members")
     user = relationship("User", back_populates="memberships")
     __table_args__ = (UniqueConstraint("business_id", "user_id", name="uq_business_user"),)
 

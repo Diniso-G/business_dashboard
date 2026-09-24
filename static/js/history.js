@@ -34,7 +34,7 @@ async function loadHistory() {
             <td>$${(r.total_revenue || 0).toLocaleString()}</td>
             <td>$${(r.avg_order_value || 0).toLocaleString()}</td>
             <td> <a href="/dashboard?report=${r.id}" class="btn-small">View</a>
-                <button class="btn-small btn-delete-row" data-id="${r.id}" type="button">Delete<.button>
+                <button class="btn-small btn-delete-row" data-id="${r.id}" type="button">Delete</button>
             </td>`;
 
         tr.querySelector('input[type="checkbox"]').addEventListener("click", (e) => {
@@ -71,8 +71,8 @@ document.getElementById("compareBtn").addEventListener("click", async () => {
         div.className = "compare-metric";
         div.innerHTML = `
             <div class="em-label">${key.replace(/_/g, " ")}</div>
-            <div class="em-value">${key.previous}-- ${val.current}</div>
-            <div class="cm-change" ${changeClass}>${arrow} ${val.change_pct ?? "n/a"}%</div>
+            <div class="em-value">${val.previous}-- ${val.current}</div>
+            <div class="cm-change ${changeClass}">${arrow} ${val.change_pct ?? "n/a"}%</div>
             `;
         grid.appendChild(div);
     });

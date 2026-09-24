@@ -134,7 +134,7 @@ document.getElementById("mappingSubmitBtn").addEventListener("click", async () =
 });
 
 function renderResults(data) {
-    currentReportId = data.resport_id || null;
+    currentReportId = data.report_id || null;
     chatHistory = [];
     document.getElementById("chatLog").innerHTML = "";
     resdiv.style.display = "block";
@@ -198,7 +198,7 @@ function renderResults(data) {
                 reveal(document.getElementById("chartBestCard"));
             }
             if (data.charts.revenue_by_day){
-                document.getElementById("chartsDayCard").style.display = "block";
+                document.getElementById("chartDayCard").style.display = "block";
                 Plotly.newPlot("chart__byday", data.charts.revenue_by_day.data, data.charts.revenue_by_day.layout);
                 reveal(document.getElementById("chartDayCard"));
             }
@@ -233,7 +233,7 @@ async function loadOverallTrend() {
     const data = await resp.json();
 
     if (!data.points.length) {
-        Plotly.purge("charts__overalltrend");
+        Plotly.purge("chart__overalltrend");
         return;
     }
 
@@ -270,7 +270,7 @@ async function sendChat() {
     const data = await resp.json();
     log.innerHTML += `<div class="chat-msg assistant"><b>Assistant:<b> ${data.answer}</div>`;
     log.scrollTop = log.scrollHeight;
-    chatHistory.push({role: "assistant", content: data.amswer});
+    chatHistory.push({role: "assistant", content: data.answer});
 }
 
 document.getElementById("importSheetBtn").addEventListener("click", () => openModal("sheetModal"));
@@ -285,7 +285,7 @@ document.getElementById("sheetSubmitBtn").addEventListener("click", async () => 
 document.getElementById("importStripeBtn").addEventListener("click", () => openModal("stripeModal"));
 document.getElementById("stripeCancelBtn").addEventListener("click", () => closeModal("stripeModal"));
 document.getElementById("stripeSubmitBtn").addEventListener("click", async () => {
-    const secretKey = document.getElementById("stripeJey").value.trim();
+    const secretKey = document.getElementById("stripeKey").value.trim();
     if (!secretKey) return;
     closeModal("stripeModal");
     await runImport("/import/stripe", {secret_key: secretKey});

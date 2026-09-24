@@ -38,7 +38,7 @@ async function loadBusinesses() {
     if (managingBusinessId) loadMembers();
 }
 
-document.getElementById("cretaeBusinessBtn").addEventListener("click", async () => {
+document.getElementById("createBusinessBtn").addEventListener("click", async () => {
     const name = document.getElementById("newBusinessName").value.trim();
     if (!name) return;
     const resp = await fetch("/businesses", {
@@ -67,7 +67,7 @@ async function loadMembers() {
 }
 
 document.getElementById("inviteBtn").addEventListener("click", async () => {
-    if (managingBusinessId) {alert("Select a workspace above first."); return;}
+    if (!managingBusinessId) {alert("Select a workspace above first."); return;}
     const email = document.getElementById("inviteEmail").value.trim();
     if (!email) return;
     const resp = await fetch(`/businesses/${managingBusinessId}/invite`, {method: "POST", headers: authHeaders({"Content-Type" : "application/json"}), body: JSON.stringify({email})

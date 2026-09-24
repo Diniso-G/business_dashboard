@@ -32,10 +32,13 @@ class LoginRequest(BaseModel):
 
 @router.post("/register")
 def register(payload: RegisterRequest, db:Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email==payload.email).first()
+    existing = db.query(User).filter(User.email == payload.email).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
-    user = User(email=payload.email, hashed_password=hash_password(payload.password),)
+
+    if len(payload.password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+    user = User(email=payload.email, hashed_password=hash_password(payload.password))
     db.add(user)
     db.commit()
     db.refresh(user)
