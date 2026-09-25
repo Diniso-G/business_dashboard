@@ -7,14 +7,19 @@ Built to demonstrate a complete data pipline from raw file upload, through ata a
 ---
 ## Features
 
-- File upload -which accepts .csv and .xlsx sales data
-- Automated analysis - pandas calculations of total revenue, average order value, best selling products, and monthly revene trends
-- Charts -Plotly- generated revenue and sales visualisations
-- Persistent storage -every uploaded report is saved to a SQLite database via sql alchemy
-- AI Recommendation - Google Gemini API analyses the results and generates specific actionable business recommendations
-- Polished web user interface -currently allow upload file then analyses and view results. Dark navy dashboard built with custom CSS and Inter topology. Contains animated metric cards, fade in transitions and responsive layout
-- User authentication -register and login with email and password; the passwords are bcrypt-hashed, sessions are JWT-based
-- Protected uploads -every upload is tied to the logged-in user; unauthorised requests are rejected
+- **File upload** -which accepts .csv and .xlsx sales data, inclduing multiple files at once merged for single analysis
+- **External data imports** -pulls sales data directly from Stripe, Shopify, or public Google Sheet instead of uploading a file
+- **Column mapping** -if your file's columns don't match the expected names, a mapping step lets you tell which column means what, instead of failing outright
+- **Automated analysis** - pandas calculations of total revenue, average order value, best selling products, and monthly revene trends, revenue growth %, busiest month/day of week, unique customers, refund rate, and anomaly detection (statistical outliers flagged automatically)
+- **Charts** -Plotly- generated revenue and sales visualisations
+- **Export** - download any report as CSV or PDF
+- **Persistent** storage -every uploaded report is saved to a SQLite database via sql alchemy
+- **AI Recommendation** - Google Gemini API analyses the results and generates specific actionable business recommendations, with an explicit low confidence note when the sample size is small
+- **Chat with your data** - ask free-form follow up questions about a specific report. Answers are grounded only in that reports stored summary (not the raw file), so the model won't invent mnumbers
+- **Workspaces + team access** -separate multiple businesses/shops into their own workspace, and invite other registered users to view and work with the same reports.
+- **Polished web user interface** -currently allow upload file then analyses and view results. Dark navy dashboard built with custom CSS and Inter topology. Contains animated metric cards, fade in transitions and responsive layout
+- **User authentication** -register and login with email and password; the passwords are bcrypt-hashed, sessions are JWT-based
+- **Protected everything** -every upload, report, workspace, and ation is tied to the logged-in user; unauthorised requests are rejected
 
 ---
 
@@ -25,6 +30,9 @@ Built to demonstrate a complete data pipline from raw file upload, through ata a
 | Data Analysis  | Pandas                            |
 | Visualisation  | Plotly                            |
 | Database       | SQLite, SQLAlchemy                |
+| Integrations   | Stripe API,Shopify Admin API,Google Sheets|
+| Email          | smtplib + APScheduler             |
+| PDF export     | ReportLab                         |
 | AI             | Google Gemini API                 |
 | Frontend       | HTML, JAVASCRPT (FETCH API)       |
 | Authentication | JWT(python jose), bcrypt(passlib) |

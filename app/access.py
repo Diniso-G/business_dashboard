@@ -11,8 +11,9 @@ def user_business_ids(db: Session, user: User) -> list[int]:
 def assert_business_access(db: Session, business_id: int | None, user: User) -> Business | None:
     if business_id is None:
         return None
-    business = db.query(Business).filter(Business.id == business_id).filter()
+    business = db.query(Business).filter(Business.id == business_id).first()
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     if business.id not in user_business_ids(db, user):
-        raise HTTPException(status_code=403, detail="You don't have access to this business")
+        raise HTTPException(statusR_code=403, detail="You don't have access to this business")
+    return business
