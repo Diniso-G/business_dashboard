@@ -17,7 +17,7 @@ async function loadHistory() {
     selectedForCompare = [];
 
     if (!reports.length) {
-        container.innerHTML = "<p style='color:var(--slate)'>No reports yet in this workspace. <a href=`/dashboard'>Upload one</a> to get started.</p>";
+        container.innerHTML = "<p style='color:var(--slate)'>No reports yet in this workspace. <a href='/dashboard'>Upload one</a> to get started.</p>";
         return;
     }
 

@@ -217,12 +217,44 @@ function renderResults(data) {
         }
         document.getElementById("aiLoading").classList.remove("show");
     }, 150);
-
+/*
     if (currentReportId) {
         document.getElementById("exportCsvBtn").href = `/reports/${currentReportId}/export.csv`;
         document.getElementById("exportPdfBtn").href = `/reports/${currentReportId}/export.pdf`;
+    }*/
+}
+
+async function downloadExport(format) {
+    if (!currentReportId) {alert("Analyse a report first."); return;}
+    try {
+        const resp = await fetch(`/reports/${currentReportId}/export.${format}`, {headers: authHeaders()});
+        if(!resp.ok) {
+            alert("Export failed: "+ (await resp.text()));
+            return;
+        }
+        const blob = await resp.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `report_${currentReportId}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (err) {
+        alert("Export failed: "+ err.message);
     }
 }
+
+document.getElementById("exportCsvBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    downloadExport("csv");
+});
+
+document.getElementById("exportPdfBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    downloadExport("pdf");
+});
 
 async function loadOverallTrend() {
     const businessId = getCurrentBusinessId();

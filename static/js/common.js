@@ -19,6 +19,7 @@ function requireAuth() {
 function logout() {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("currentBusinessId");
     window.location.href = "/";
 }
 

@@ -299,7 +299,7 @@ def export_pdf(report_id: int, db: Session = Depends(get_db), current_user= Depe
                     y = height - 60
 
     c.save()
-    buffer.save()
+    buffer.seek(0)
     return StreamingResponse(buffer, media_type="application/pdf", headers={"Content-Disposition": f"attachment; filename=report_{report_id}.pdf"})
 
 class ChatMessage(BaseModel):

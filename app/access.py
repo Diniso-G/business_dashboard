@@ -15,5 +15,5 @@ def assert_business_access(db: Session, business_id: int | None, user: User) -> 
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     if business.id not in user_business_ids(db, user):
-        raise HTTPException(statusR_code=403, detail="You don't have access to this business")
+        raise HTTPException(status_code=403, detail="You don't have access to this business")
     return business

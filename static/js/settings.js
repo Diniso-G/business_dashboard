@@ -47,7 +47,10 @@ document.getElementById("createBusinessBtn").addEventListener("click", async () 
     });
 
     if (resp.ok) {
+        const created = await resp.json();
         document.getElementById("newBusinessName").value = "";
+        managingBusinessId = created.id;
+        document.getElementById("selectedBusinessLabel").textContent = `- ${created.name}`;
         loadBusinesses();
     }else {
         alert("Couldn't create workspace.");
@@ -68,13 +71,15 @@ async function loadMembers() {
 
 document.getElementById("inviteBtn").addEventListener("click", async () => {
     if (!managingBusinessId) {alert("Select a workspace above first."); return;}
+    const targetName = document.querySelector(".workspace-row.active span")?.textContent || `workspace #${managingBusinessId}`;
     const email = document.getElementById("inviteEmail").value.trim();
     if (!email) return;
+    if (!confirm(`Invite ${email} to "${targetName}"?`)) return;
     const resp = await fetch(`/businesses/${managingBusinessId}/invite`, {method: "POST", headers: authHeaders({"Content-Type" : "application/json"}), body: JSON.stringify({email})
     });
 
     const data = await resp.json();
-    alert(data.message || data.detaik || "Done.");
+    alert(data.message || data.detail || "Done.");
     if (resp.ok) {
         document.getElementById("inviteEmail").value = "";
         loadMembers();

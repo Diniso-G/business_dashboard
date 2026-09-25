@@ -7,5 +7,6 @@ sqlalchemy
 plotly
 openpyxl
 jinja2
+reportlab
 python-multipart
 
