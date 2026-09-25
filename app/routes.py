@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from pydantic import BaseModel
 
 import pandas as ps
@@ -11,6 +12,7 @@ from app.analytics import analyze_datafrm, generate_charts, detect_columns, appl
 
 from  app.database import get_db
 from app.models import Report, Business, BusinessMember, User
+from app.access import user_business_ids, assert_business_access
 from app.ai_recommendations import get_recommendations, chat_about_report
 from app.auth import get_current_user
 
@@ -61,6 +63,8 @@ async def _read_upload_to_df(file: UploadFile) -> ps.DataFrame:
         raise HTTPException(status_code=400, detail="Couldn't parse that file - is it a valid CSV/EXCEL file?")
 
 def _assert_business_access(db: Session, business_id: int | None, user: User):
+    assert_business_access(db, business_id, user)
+    ''''
     if business_id is None:
         return
     business = db.query(Business).filter(Business.id == business_id).first()
@@ -70,7 +74,7 @@ def _assert_business_access(db: Session, business_id: int | None, user: User):
     owned = business.owner_id == user.id
     member = db.query(BusinessMember).filter(BusinessMember.business_id == business_id, BusinessMember.user_id == user.id).first()
     if not (owned or member):
-        raise HTTPException(status_code=403, detail="You don't have access to this business")
+        raise HTTPException(status_code=403, detail="You don't have access to this business")'''
 
 @router.post("/upload/preview")
 async def upload_preview(file: UploadFile = File(...), current_user=Depends(get_current_user)):
@@ -136,9 +140,15 @@ async def upload_file(files :list[UploadFile] = File(...), business_id: int | No
     #    return {"filename": file.filename}
 
 def _report_query_for_user(db: Session, user: User, business_id: int | None = None):
-    q = db.query(Report).filter(Report.user_id == user.id)
     if business_id is not None:
-        q = q.filter(Report.business_id == business_id)
+        assert_business_access(db, business_id, user)
+        q = db.query(Report).filter(Report.business_id == business_id)
+    else:
+        accessible = user_business_ids(db, user)
+        if accessible:
+            q = db.query(Report).filter(or_(Report.user_id == user.id, Report.business_id.in_(accessible)))
+        else:
+            q = db.query(Report).filter(Report.user_id == user.id)
     return q.order_by(Report.uploaded_at.desc())
 
 @router.get("/reports")
@@ -152,6 +162,7 @@ def list_reports(business_id: int | None = None, db: Session = Depends(get_db), 
             "total_revenue": r.total_revenue,
             "avg_order_value": r.avg_order_value,
             "business_id": r.business_id,
+            "uploaded_by": r.owner.email if r.owner else None,
         }
         for r in reports
     ]
@@ -160,7 +171,11 @@ def _get_owned_report(db: Session, report_id: int, user: User) -> Report:
     report = db.query(Report).filter(Report.id == report_id).first()
     if not report:
         raise HTTPException(status_code=404, detail="Report not found")
-    if report.user_id != user.id:
+
+    if report.business_id is not None:
+        assert_business_access(db, report.business_id, user)
+
+    elif report.user_id != user.id:
         raise HTTPException(status_code=403, detail="Not your report")
     return report
 
@@ -209,6 +224,11 @@ def get_report(report_id: int, db: Session = Depends(get_db), current_user=Depen
 @router.delete("/reports/{report_id}")
 def delete_report(report_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     report = _get_owned_report(db, report_id, current_user)
+
+    is_uploader = report.user_id == current_user.id
+    is_business_owner = (report.business_id is not None and db.query(Business).filter(Business.id == report.business_id, Business.owner_id == current_user.id).first() is not None)
+    if not (is_uploader or is_business_owner):
+        raise HTTPException(status_code=403, detail="Only the uploader or the workspace owner can delete this report")
     db.delete(report)
     db.commit()
     return {"message": "Deleted"}

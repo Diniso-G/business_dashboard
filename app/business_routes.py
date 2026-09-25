@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Business, BusinessMember, User
 from app.auth import get_current_user
+from app.access import user_business_ids, assert_business_access
 
 router = APIRouter(prefix="/businesses", tags=["businesses"])
 
@@ -12,21 +13,27 @@ class BusinessCreate(BaseModel):
     name: str
 
 class InviteRequest(BaseModel):
-    email: str
+    email: EmailStr
 
 def _user_business_ids(db:Session, user: User) -> list[int]:
+    return user_business_ids(db, user)
+    ''''
     owned = [b.id for b in db.query(Business).filter(Business.owner_id == user.id).all()]
     member_of = [m.business_id for m in db.query(BusinessMember).filter(BusinessMember.user_id == user.id).all()]
     return list(set(owned + member_of))
+    '''
 
 def _assert_access(db:Session, business_id: int, user:User) -> Business:
+    return assert_business_access(db, business_id, user)
+    ''''
     business = db.query(Business).filter(Business.id == business_id).first()
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     if business.id not in _user_business_ids(db, user):
         raise HTTPException(status_code=403, detail="You don't have access to this business")
     return business
-
+'''
+    
 @router.post("")
 def create_business(payload: BusinessCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     business = Business(name=payload.name.strip(), owner_id=user.id)
